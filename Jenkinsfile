@@ -13,16 +13,17 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''#!/bin/bash
-                echo 'Test Step: We run testing tool like pytest here'
+                echo 'Test Step: Running pytest'
 
-                # TODO fill out the path to conda here
-                # sudo /PATH/TO/CONDA init
+                # Initialize conda
+                source /home/hdng/miniconda3/etc/profile.d/conda.sh
 
-                # TODO Complete the command to run pytest
-                # sudo /PATH/TO/CONDA run -n <Envinronment Name> <Command you want to run>
+                # Create and activate environment (if it doesn't exist)
+                conda create -n mlip python pytest numpy pandas scikit-learn -c conda-forge -y || true
+                conda activate mlip
 
-                echo 'pytest not runned'
-                exit 1 #comment this line after implementing Jenkinsfile
+                # Run pytest
+                pytest
                 '''
 
             }
