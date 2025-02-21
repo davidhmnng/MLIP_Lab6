@@ -15,17 +15,22 @@ pipeline {
                 sh '''#!/bin/bash
                 echo 'Test Step: Running pytest'
 
-                # Initialize conda
-                source /home/hdng/miniconda3/etc/profile.d/conda.sh
+                # Download and install Miniconda if not exists
+                if [ ! -d "/var/lib/jenkins/miniconda3" ]; then
+                    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+                    bash miniconda.sh -b -p /var/lib/jenkins/miniconda3
+                fi
 
-                # Create and activate environment (if it doesn't exist)
+                # Initialize conda
+                source /var/lib/jenkins/miniconda3/etc/profile.d/conda.sh
+
+                # Create and activate environment
                 conda create -n mlip python pytest numpy pandas scikit-learn -c conda-forge -y || true
                 conda activate mlip
 
                 # Run pytest
                 pytest
                 '''
-
             }
         }
         stage('Deploy') {
